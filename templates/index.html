@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life OS</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+    background: linear-gradient(135deg,#0f172a,#1e293b);
+    color:white;
+    font-family:sans-serif;
+    margin:0;
+}
+
+.header {
+    text-align:center;
+    padding:15px;
+    font-size:20px;
+}
+
+.container {
+    display:flex;
+    flex-wrap:wrap;
+}
+
+.sidebar {
+    width:250px;
+    padding:20px;
+}
+
+.main {
+    flex:1;
+    padding:20px;
+}
+
+.card {
+    background:#1e293b;
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:10px;
+}
+
+input,button {
+    width:100%;
+    padding:12px;
+    margin:5px 0;
+    border:none;
+    border-radius:6px;
+}
+
+button {
+    background:#22c55e;
+    color:white;
+}
+
+#aiFloat {
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:#3b82f6;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+}
+
+@media(max-width:768px){
+.sidebar{width:100%;}
+.main{width:100%;}
+}
+
+table {
+    width:100%;
+    display:block;
+    overflow-x:auto;
+}
+</style>
+
+<script>
+function showAI(){
+fetch('/ai')
+.then(r=>r.text())
+.then(d=>alert(d))
+}
+</script>
+
+</head>
+
+<body>
+
+<div class="header">🚀 Life OS</div>
+
+<div class="container">
+
+<div class="sidebar">
+<form action="/add" method="POST">
+<input name="mood" placeholder="Mood">
+<input name="study" placeholder="Study">
+<input name="sleep" placeholder="Sleep">
+<input name="water" placeholder="Water">
+<button>Add</button>
+</form>
+</div>
+
+<div class="main">
+
+<div class="card">
+<h2>Score: {{score}}</h2>
+<h3>Streak: {{streak}}</h3>
+<h3>{{trend}}</h3>
+</div>
+
+<div class="card">
+<canvas id="chart"></canvas>
+</div>
+
+<div class="card">
+<table>
+<tr><th>Date</th><th>Mood</th><th>Study</th></tr>
+
+{% for row in data %}
+<tr>
+<td>{{row[1]}}</td>
+<td>{{row[2]}}</td>
+<td>{{row[3]}}</td>
+</tr>
+{% endfor %}
+
+</table>
+</div>
+
+</div>
+</div>
+
+<button id="aiFloat" onclick="showAI()">🤖</button>
+
+<script>
+let d=[{% for row in data %}{{row[3]}},{% endfor %}];
+let l=[{% for row in data %}"{{row[1]}}",{% endfor %}];
+
+new Chart(document.getElementById("chart"),{
+type:'line',
+data:{labels:l,datasets:[{data:d}]}
+});
+</script>
+
+</body>
+</html>
